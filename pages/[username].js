@@ -5,7 +5,7 @@ import Link from "../components/Link";
 import Image from "next/image";
 import Head from "next/head";
 
-const LinkPage = ({ profile, avatar_url, links }) => {
+const LinkPage = ({ profile, avatar_url, links }) => {  
   return (
     <>
       <Head>
@@ -20,11 +20,15 @@ const LinkPage = ({ profile, avatar_url, links }) => {
       </Head>
       <div className="min-h-screen max-w-2xl mx-auto flex flex-col items-center py-10">
         {avatar_url ? (
-          <img
-            className="rounded-full h-24 w-24 mb-4"
+          <div className="rounded-full h-24 w-24 mb-4 relative"> 
+            <Image
             src={avatar_url}
-            alt="img"
-          />
+            alt="Picture of the author"
+              layout="fill" // required
+              objectFit="cover" // change to suit your needs
+              className="rounded-full" // just an example
+            />
+        </div>
         ) : (
           <></>
         )}
@@ -41,29 +45,9 @@ const LinkPage = ({ profile, avatar_url, links }) => {
   );
 };
 
-export const getStaticPaths = async () => {
-  const { data: lessons } = await supabase.from("profiles").select("username");
+export async function getServerSideProps(context) {
+  let username  = context.params.username;
 
-  const paths = lessons.map(({ username }) => ({
-    params: {
-      username: username.toString(),
-    },
-  }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-function downloadImage(path) {
-  return (
-    "https://elhwmvlgafwmydwmaumb.supabase.co/storage/v1/object/public/avatars/" +
-    path
-  );
-}
-
-export const getStaticProps = async ({ params: { username } }) => {
   let {
     data: profile,
     error,
@@ -73,31 +57,31 @@ export const getStaticProps = async ({ params: { username } }) => {
     .select("*")
     .eq("username", username)
     .single();
+    
+    let avatar_url = null;
 
-  let avatar_url = null;
-
-  if (profile.avatar_url != null) {
-    avatar_url = downloadImage(profile.avatar_url);
-  }
-
-  let links = [];
-  try {
-    let { data, error, status } = await supabase
-      .from("links")
-      .select(`*`)
-      .eq("user_id", profile.id);
-
-    if (error && status !== 406) {
-      throw error;
+    if (profile?.avatar_url != null) {
+      avatar_url = await downloadImage(profile.avatar_url);
     }
-
-    if (data) {
-      links = data;
+  
+    let links = [];
+    try {
+      let { data, error, status } = await supabase
+        .from("links")
+        .select(`*`)
+        .eq("user_id", profile.id);
+  
+      if (error && status !== 406) {
+        throw error;
+      }
+  
+      if (data) {
+        links = data;
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
     }
-  } catch (error) {
-    alert(error.message);
-  } finally {
-  }
 
   return {
     props: {
@@ -106,6 +90,13 @@ export const getStaticProps = async ({ params: { username } }) => {
       links,
     },
   };
-};
+}
+
+async function downloadImage(path) {
+  return (
+    "https://elhwmvlgafwmydwmaumb.supabase.co/storage/v1/object/public/avatars/" +
+    path
+  );
+}
 
 export default LinkPage;
