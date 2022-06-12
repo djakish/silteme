@@ -56,6 +56,7 @@ export default function Avatar({ url, size, onUpload }) {
   return (
     <div>
       {avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={avatarUrl}
           alt="Avatar"
@@ -70,7 +71,7 @@ export default function Avatar({ url, size, onUpload }) {
       )}
       <div className="mt-6">
         <label
-          className="mt-2 text-base leading-normal px-4 py-2 bg-emerald-400 rounded-md text-white text-sm "
+          className="mt-2 text-base leading-normal px-4 py-2 bg-emerald-400 rounded-md text-whit"
           htmlFor="single"
         >
           {uploading ? "Uploading ..." : "Upload"}

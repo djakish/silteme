@@ -5,8 +5,19 @@ import Avatar from "./Avatar";
 function AuthedLink({ link, deleteHandler, isDeleteLoading }) {
   return (
     <div className="flex justify-between mt-5 p-2 ">
-      <label className="text-white">{link.title}</label>
-      <label className="text-white">{link.url}</label>
+      <input className=" bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg block w-full p-2.5" value={link.title} disabled/>
+      <input className=" bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg block w-full p-2.5" value={link.url} disabled/>
+      <button
+        className="text-white rounded-lg bg-green-600 p-2"
+        onClick={(event) => {
+          event.stopPropagation();
+          deleteHandler(link.id);
+        }}
+        isDisabled={isDeleteLoading}
+      >
+        Update
+      </button>
+
       <button
         className="text-white rounded-lg bg-red-600 p-2"
         onClick={(event) => {
@@ -248,8 +259,8 @@ export default function Account({ session }) {
           Add Link
         </button>
       </div>
-
-      <label className="text-xl font-bold text-white">My Links</label>
+      <label className="text-xl font-bold text-white  mt-20">My Links</label>
+      
       {links.map((link, index) => (
         <AuthedLink link={link} key={index} deleteHandler={deleteHandler} />
       ))}

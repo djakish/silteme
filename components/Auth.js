@@ -21,9 +21,7 @@ export default function Auth() {
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="col-6 form-widget">
-        <h1 className="text-3xl font-bold	 text-white">
-          silteme
-        </h1>
+        <h1 className="text-3xl font-bold	 text-white">silteme</h1>
         <p className="text-lg font-thin	 text-white pt-2">
           Sign in via magic link with your email below
         </p>

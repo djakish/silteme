@@ -18,9 +18,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>
-          Silteme
-        </title>
+        <title>Silteme</title>
         <meta
           name="description"
           content="Make a simple personalized links page easily."

@@ -1,17 +1,13 @@
-import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import Link from "../components/Link";
 import Image from "next/image";
 import Head from "next/head";
 
-const LinkPage = ({ profile, avatar_url, links }) => {  
+const LinkPage = ({ profile, avatar_url, links }) => {
   return (
     <>
       <Head>
-        <title>
-          {profile.username}
-        </title>
+        <title>{profile.username}</title>
         <meta
           name="description"
           content="{profile.username} personal links."
@@ -20,15 +16,15 @@ const LinkPage = ({ profile, avatar_url, links }) => {
       </Head>
       <div className="min-h-screen max-w-2xl mx-auto flex flex-col items-center py-10">
         {avatar_url ? (
-          <div className="rounded-full h-24 w-24 mb-4 relative"> 
+          <div className="rounded-full h-24 w-24 mb-4 relative">
             <Image
-            src={avatar_url}
-            alt="Picture of the author"
+              src={avatar_url}
+              alt="Picture of the author"
               layout="fill" // required
               objectFit="cover" // change to suit your needs
               className="rounded-full" // just an example
             />
-        </div>
+          </div>
         ) : (
           <></>
         )}
@@ -46,7 +42,7 @@ const LinkPage = ({ profile, avatar_url, links }) => {
 };
 
 export async function getServerSideProps(context) {
-  let username  = context.params.username;
+  let username = context.params.username;
 
   let {
     data: profile,
@@ -57,31 +53,31 @@ export async function getServerSideProps(context) {
     .select("*")
     .eq("username", username)
     .single();
-    
-    let avatar_url = null;
 
-    if (profile?.avatar_url != null) {
-      avatar_url = await downloadImage(profile.avatar_url);
+  let avatar_url = null;
+
+  if (profile?.avatar_url != null) {
+    avatar_url = await downloadImage(profile.avatar_url);
+  }
+
+  let links = [];
+  try {
+    let { data, error, status } = await supabase
+      .from("links")
+      .select(`*`)
+      .eq("user_id", profile.id);
+
+    if (error && status !== 406) {
+      throw error;
     }
-  
-    let links = [];
-    try {
-      let { data, error, status } = await supabase
-        .from("links")
-        .select(`*`)
-        .eq("user_id", profile.id);
-  
-      if (error && status !== 406) {
-        throw error;
-      }
-  
-      if (data) {
-        links = data;
-      }
-    } catch (error) {
-      console.log(error.message);
-    } finally {
+
+    if (data) {
+      links = data;
     }
+  } catch (error) {
+    console.log(error.message);
+  } finally {
+  }
 
   return {
     props: {
