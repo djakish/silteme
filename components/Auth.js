@@ -27,7 +27,7 @@ export default function Auth() {
         </p>
         <div>
           <input
-            className="block bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg block w-full p-2.5 mt-2"
+            className="block bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg w-full p-2.5 mt-2"
             type="email"
             placeholder="Your email"
             value={email}

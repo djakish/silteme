@@ -7,7 +7,7 @@ function AuthedLink({ link, deleteHandler, isDeleteLoading }) {
     <div className="flex justify-between mt-5 p-2 ">
       <input className=" bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg block w-full p-2.5" value={link.title} disabled/>
       <input className=" bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg block w-full p-2.5" value={link.url} disabled/>
-      <button
+      {/* <button
         className="text-white rounded-lg bg-green-600 p-2"
         onClick={(event) => {
           event.stopPropagation();
@@ -27,7 +27,7 @@ function AuthedLink({ link, deleteHandler, isDeleteLoading }) {
         isDisabled={isDeleteLoading}
       >
         Delete
-      </button>
+      </button> */}
     </div>
   );
 }

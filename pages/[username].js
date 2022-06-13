@@ -3,14 +3,38 @@ import Link from "../components/Link";
 import Image from "next/image";
 import Head from "next/head";
 
-const LinkPage = ({ profile, avatar_url, links }) => {
+import { useRouter } from 'next/router'
+import { useEffect, useState } from "react";
+
+const LinkPage = () => {
+  const router = useRouter()
+  const { username } = router.query
+
+  const [profile, setProfile] = useState({})
+  const [avatar_url, setAvatar] = useState('')
+  const [links, setLinks] = useState([])
+
+  useEffect(() => {
+    // declare the data fetching function
+    const fetchData = async () => {
+      const data = await getData(username);
+      setAvatar(data.props.avatar_url)
+      setProfile(data.props.profile)
+      setLinks(data.props.links)
+    }
+    
+    fetchData()
+      .catch(console.error);
+
+  }, [username])
+
   return (
     <>
       <Head>
-        <title>{profile.username}</title>
+        <title>{username}</title>
         <meta
           name="description"
-          content="{profile.username} personal links."
+          content="{username} personal links."
           key="desc"
         />
       </Head>
@@ -30,7 +54,7 @@ const LinkPage = ({ profile, avatar_url, links }) => {
         )}
 
         <h1 className="font-bold text-lg mb-10 text-white">
-          @{profile.username}
+          @{username}
         </h1>
 
         {links.map((link, index) => (
@@ -41,9 +65,7 @@ const LinkPage = ({ profile, avatar_url, links }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  let username = context.params.username;
-
+async function getData(username) {
   let {
     data: profile,
     error,
