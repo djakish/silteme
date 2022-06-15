@@ -4,6 +4,7 @@ const nextConfig = {
   images: {
     domains: ["elhwmvlgafwmydwmaumb.supabase.co", "localhost"],
   },
+  swcMinify: true,
 };
 
 module.exports = nextConfig;
