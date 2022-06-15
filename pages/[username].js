@@ -10,23 +10,22 @@ const LinkPage = () => {
   const router = useRouter()
   const { username } = router.query
 
-  const [profile, setProfile] = useState({})
   const [avatar_url, setAvatar] = useState('')
   const [links, setLinks] = useState([])
 
   useEffect(() => {
-    // declare the data fetching function
+    if(!router.isReady) return;
+
     const fetchData = async () => {
       const data = await getData(username);
       setAvatar(data.props.avatar_url)
-      setProfile(data.props.profile)
       setLinks(data.props.links)
     }
     
     fetchData()
       .catch(console.error);
 
-  }, [username])
+  }, [username,router.isReady])
 
   return (
     <>
@@ -47,6 +46,7 @@ const LinkPage = () => {
               layout="fill" // required
               objectFit="cover" // change to suit your needs
               className="rounded-full" // just an example
+              priority="true"
             />
           </div>
         ) : (
@@ -103,7 +103,6 @@ async function getData(username) {
 
   return {
     props: {
-      profile,
       avatar_url,
       links,
     },
