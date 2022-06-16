@@ -37,9 +37,9 @@ const LinkPage = ({username}) => {
             <Image
               src={avatar_url}
               alt="Picture of the author"
-              layout="fill" // required
-              objectFit="cover" // change to suit your needs
-              className="rounded-full" // just an example
+              layout="fill" 
+              objectFit="cover" 
+              className="rounded-full" 
               priority
             />
           </div>
@@ -87,7 +87,7 @@ async function getData(username) {
     status,
   } = await supabase
     .from("profiles")
-    .select("*")
+    .select("id,avatar_url")
     .eq("username", username)
     .single();
 
@@ -101,7 +101,7 @@ async function getData(username) {
   try {
     let { data, error, status } = await supabase
       .from("links")
-      .select(`*`)
+      .select(`title,url`)
       .eq("user_id", profile.id);
 
     if (error && status !== 406) {
@@ -133,7 +133,7 @@ export async function getServerSideProps(context) {
 
 async function downloadImage(path) {
   return (
-    "https://elhwmvlgafwmydwmaumb.supabase.co/storage/v1/object/public/avatars/" +
+    "https://nnxkhppnqvfelyhkkkgq.supabase.co/storage/v1/object/public/avatars/" +
     path
   );
 }

@@ -16,7 +16,7 @@ function AuthedLink({ link, deleteHandler, isDeleteLoading }) {
         isDisabled={isDeleteLoading}
       >
         Update
-      </button>
+      </button> */}
 
       <button
         className="text-white rounded-lg bg-red-600 p-2"
@@ -27,7 +27,7 @@ function AuthedLink({ link, deleteHandler, isDeleteLoading }) {
         isDisabled={isDeleteLoading}
       >
         Delete
-      </button> */}
+      </button>
     </div>
   );
 }

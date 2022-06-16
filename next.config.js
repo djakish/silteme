@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   images: {
-    domains: ["elhwmvlgafwmydwmaumb.supabase.co", "localhost"],
+    domains: ["nnxkhppnqvfelyhkkkgq.supabase.co", "localhost"],
   },
   swcMinify: true,
 };
