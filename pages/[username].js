@@ -5,22 +5,7 @@ import Head from "next/head";
 
 import { useEffect, useState } from "react";
 
-const LinkPage = ({username}) => {
-
-  const [avatar_url, setAvatar] = useState(null);
-  const [links, setLinks] = useState([]);
-
-  useEffect(() => {
-
-    const fetchData = async () => {
-      const data = await getData(username);
-      setAvatar(data.props.avatar_url);
-      setLinks(data.props.links);
-    };
-
-    fetchData().catch(console.error);
-  }, [username]);
-
+const LinkPage = ({ username, avatar_url, links }) => {
   return (
     <>
       <Head>
@@ -80,11 +65,10 @@ const LinkPage = ({username}) => {
   );
 };
 
-async function getData(username) {
+export async function getServerSideProps(context) {
+  let username = context.params.username;
   let {
     data: profile,
-    error,
-    status,
   } = await supabase
     .from("profiles")
     .select("id,avatar_url")
@@ -118,17 +102,11 @@ async function getData(username) {
 
   return {
     props: {
+      username,
       avatar_url,
       links,
     },
   };
-}
-
-export async function getServerSideProps(context) {
-  const { username } = context.query;
-  return {
-    props: {username}, 
-  }
 }
 
 async function downloadImage(path) {
