@@ -3,18 +3,14 @@ import Link from "../components/Link";
 import Image from "next/image";
 import Head from "next/head";
 
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const LinkPage = () => {
-  const router = useRouter();
-  const { username } = router.query;
+const LinkPage = ({username}) => {
 
   const [avatar_url, setAvatar] = useState(null);
   const [links, setLinks] = useState([]);
 
   useEffect(() => {
-    if (!router.isReady) return;
 
     const fetchData = async () => {
       const data = await getData(username);
@@ -23,7 +19,7 @@ const LinkPage = () => {
     };
 
     fetchData().catch(console.error);
-  }, [username, router.isReady]);
+  }, [username]);
 
   return (
     <>
@@ -126,6 +122,13 @@ async function getData(username) {
       links,
     },
   };
+}
+
+export async function getServerSideProps(context) {
+  const { username } = context.query;
+  return {
+    props: {username}, 
+  }
 }
 
 async function downloadImage(path) {
