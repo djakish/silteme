@@ -14,7 +14,7 @@ function AuthedLink({loading, link, deleteHandler, isDeleteLoading, updateHandle
         onChange={e => setUrl(e.target.value)} 
         value={url} />
       <button
-        className="text-white rounded-lg bg-green-600 p-2"
+        className="text-white rounded-lg p-2 bg-emerald-400 "
         onClick={(event) => {
           event.stopPropagation();
           updateHandler({linkId:link.id,title,url});
@@ -49,7 +49,7 @@ export default function Account({ session }) {
   const [url, setUrl] = useState(null);
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false);
   useEffect(() => {
     getProfile();
     getLinks();
@@ -104,7 +104,7 @@ export default function Account({ session }) {
 
   const updateHandler = async ({linkId, title, url}) => {
     try {
-      setLoading(true);
+      setIsUpdateLoading(true);
       const user = supabase.auth.user();
 
       const updates = {
@@ -125,7 +125,7 @@ export default function Account({ session }) {
     } catch (error) {
       alert(error.message);
     } finally {
-      setLoading(false);
+     setIsUpdateLoading(false);
     }  
   };
 
@@ -167,7 +167,7 @@ export default function Account({ session }) {
 
   async function updateProfile({ username, website, avatar_url }) {
     try {
-      setloading(true);
+      setLoading(true);
       const user = supabase.auth.user();
 
       const updates = {
@@ -175,7 +175,7 @@ export default function Account({ session }) {
         username,
         website,
         avatar_url,
-        updated_at: new date(),
+        updated_at: new Date(),
       };
 
       let { error } = await supabase.from("profiles").upsert(updates, {
@@ -188,7 +188,7 @@ export default function Account({ session }) {
     } catch (error) {
       alert(error.message);
     } finally {
-      setloading(false);
+      setLoading(false);
     }
   }
 
@@ -233,7 +233,7 @@ export default function Account({ session }) {
       </div>
       <div>
         <label className={labelStyle} htmlFor="website">
-          Website
+          About
         </label>
         <input
           id="website"
@@ -294,7 +294,7 @@ export default function Account({ session }) {
       <label className="text-xl font-bold text-white  mt-20">My Links</label>
       
       {links.map((link, index) => (
-        <AuthedLink loading={loading} link={link} key={index} deleteHandler={deleteHandler} updateHandler={updateHandler}/>
+        <AuthedLink loading={isUpdateLoading} link={link} key={index} deleteHandler={deleteHandler} updateHandler={updateHandler}/>
       ))}
     </div>
   );

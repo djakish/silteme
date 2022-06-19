@@ -6,7 +6,7 @@ import Head from "next/head";
 
 import { useEffect, useState } from "react";
 
-const LinkPage = ({ username, avatar_url, links }) => {
+const LinkPage = ({ username, website, avatar_url, links }) => {
   return (
     <>
       <Head>
@@ -35,7 +35,8 @@ const LinkPage = ({ username, avatar_url, links }) => {
           </>
         )}
 
-        <h1 className="font-bold text-lg mb-10 text-white">@{username}</h1>
+        <h1 className="font-bold text-lg mb-5 text-white">@{username}</h1>
+        <h2 className="text-md mb-5 text-white">{website}</h2>
         {links.length != 0 ? (
           <>
             {links.map((link, index) => (
@@ -74,7 +75,7 @@ export async function getServerSideProps(context) {
     data: profile,
   } = await supabase
     .from("profiles")
-    .select("id,avatar_url")
+    .select("id,website,avatar_url")
     .eq("username", username)
     .single();
 
@@ -102,9 +103,10 @@ export async function getServerSideProps(context) {
     console.log(error.message);
   } finally {
   }
-
+  
   return {
     props: {
+      website:profile.website,
       username,
       avatar_url,
       links,
