@@ -2,29 +2,34 @@ import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import Avatar from "./Avatar";
 
-function AuthedLink({ link, deleteHandler, isDeleteLoading }) {
+function AuthedLink({loading, link, deleteHandler, isDeleteLoading, updateHandler }) {
+  const [title,setTitle] = useState(link.title);
+  const [url, setUrl] = useState(link.url);
   return (
     <div className="flex justify-between mt-5 p-2 ">
-      <input className=" bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg block w-full p-2.5" value={link.title} disabled/>
-      <input className=" bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg block w-full p-2.5" value={link.url} disabled/>
-      {/* <button
+      <input className="bg-transparent text-white border border-gray-300 text-lg rounded-lg block w-full p-2.5" 
+        onChange={e => setTitle(e.target.value)} 
+        value={title} />
+      <input className="bg-transparent text-white  border border-gray-300 text-lg rounded-lg block w-full p-2.5" 
+        onChange={e => setUrl(e.target.value)} 
+        value={url} />
+      <button
         className="text-white rounded-lg bg-green-600 p-2"
         onClick={(event) => {
           event.stopPropagation();
-          deleteHandler(link.id);
+          updateHandler({linkId:link.id,title,url});
         }}
-        isDisabled={isDeleteLoading}
+        disabled={loading}
       >
-        Update
-      </button> */}
-
+      {loading ? "Loading" : "Update"}
+      </button>
       <button
         className="text-white rounded-lg bg-red-600 p-2"
         onClick={(event) => {
           event.stopPropagation();
           deleteHandler(link.id);
         }}
-        isDisabled={isDeleteLoading}
+        disabled={isDeleteLoading}
       >
         Delete
       </button>
@@ -97,6 +102,33 @@ export default function Account({ session }) {
     }
   }
 
+  const updateHandler = async ({linkId, title, url}) => {
+    try {
+      setLoading(true);
+      const user = supabase.auth.user();
+
+      const updates = {
+        id: linkId,
+        user_id: user.id,
+        title,
+        url,
+      };
+      
+      const { error } = await supabase
+        .from('links')
+        .update({ url, title })
+        .match({ id: linkId, user_id: user.id})
+
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }  
+  };
+
   const deleteHandler = async (linkId) => {
     setIsDeleteLoading(true);
     const { error } = await supabase.from("links").delete().eq("id", linkId);
@@ -135,7 +167,7 @@ export default function Account({ session }) {
 
   async function updateProfile({ username, website, avatar_url }) {
     try {
-      setLoading(true);
+      setloading(true);
       const user = supabase.auth.user();
 
       const updates = {
@@ -143,11 +175,11 @@ export default function Account({ session }) {
         username,
         website,
         avatar_url,
-        updated_at: new Date(),
+        updated_at: new date(),
       };
 
       let { error } = await supabase.from("profiles").upsert(updates, {
-        returning: "minimal", // Don't return the value after inserting
+        returning: "minimal", // don't return the value after inserting
       });
 
       if (error) {
@@ -156,7 +188,7 @@ export default function Account({ session }) {
     } catch (error) {
       alert(error.message);
     } finally {
-      setLoading(false);
+      setloading(false);
     }
   }
 
@@ -262,7 +294,7 @@ export default function Account({ session }) {
       <label className="text-xl font-bold text-white  mt-20">My Links</label>
       
       {links.map((link, index) => (
-        <AuthedLink link={link} key={index} deleteHandler={deleteHandler} />
+        <AuthedLink loading={loading} link={link} key={index} deleteHandler={deleteHandler} updateHandler={updateHandler}/>
       ))}
     </div>
   );
