@@ -3,10 +3,34 @@ import Link from "../components/Link";
 import Footer from "../components/Footer";
 import Image from "next/image";
 import Head from "next/head";
-
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const LinkPage = ({ username, website, avatar_url, links }) => {
+  const [copied, setCopied] = useState(false);
+
+  async function copyTextToClipboard(text) {
+    if ("clipboard" in navigator) {
+      return await navigator.clipboard.writeText(text);
+    } else {
+      return document.execCommand("copy", true, text);
+    }
+  }
+
+  const handleCopyClick = () => {
+    // Asynchronously call copyTextToClipboard
+    copyTextToClipboard(window.location.href)
+      .then(() => {
+        // If successful, update the isCopied state value
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <>
       <Head>
@@ -17,63 +41,60 @@ const LinkPage = ({ username, website, avatar_url, links }) => {
           key="desc"
         />
       </Head>
-      <div className="h-screen justify-start max-w-2xl mx-auto flex flex-col items-center py-10">
-        {avatar_url ? (
-          <div className="rounded-full h-24 w-24 mb-4 relative">
-            <Image
-              src={avatar_url}
-              alt="Picture of the author"
-              layout="fill" 
-              objectFit="cover" 
-              className="rounded-full" 
-              priority
+      <div className="flex flex-col h-screen justify-start max-w-2xl mx-auto items-center py-10 ">
+        <div className="rounded-full h-24 w-24 mb-4 relative select-none">
+          <Image
+            src={avatar_url}
+            alt="Picture of the author"
+            layout="fill"
+            objectFit="cover"
+            className="rounded-full"
+            priority
+          />
+        </div>
+
+        <h1
+          className="font-bold text-xl mb-5 text-white flex"
+          onClick={handleCopyClick}
+        >
+          {!copied ? "@" + username : "Copied!"}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
             />
-          </div>
-        ) : (
-          <>
-            <div className="rounded-full h-24 w-24 mb-4 relative shadow-sm bg-gray-500"></div>
-          </>
-        )}
+          </svg>
+        </h1>
 
-        <h1 className="font-bold text-lg mb-5 text-white">@{username}</h1>
         <h2 className="text-md mb-5 text-white">{website}</h2>
-        {links.length != 0 ? (
-          <>
-            {links.map((link, index) => (
-              <Link key={index} title={link.title} url={link.url} />
-            ))}
-          </>
-        ) : (
-          <>
-            <button disabled className="bg-emerald-400 
-            text-white 
-            font-bold
-          border-emerald-300 
-            border-2
-            py-4 
-            m-4
-            hover:bg-white 
-            hover:text-emerald-300
-            w-72
-            sm:w-full
-            rounded-full
-            ">
-              Loading...
-            </button>
-          </>
-        )}
-      <Footer/>
 
+        <div className="flex-grow w-full flex flex-col items-center">
+          {links.map((link, index) => (
+            <Link key={index} title={link.title} url={link.url} />
+          ))}
+        </div>
+        <Footer />
       </div>
     </>
   );
 };
 
 export async function getServerSideProps(context) {
+  context.res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  )
+
   let username = context.params.username;
-  let {
-    data: profile,
-  } = await supabase
+  let { data: profile } = await supabase
     .from("profiles")
     .select("id,website,avatar_url")
     .eq("username", username)
@@ -103,10 +124,10 @@ export async function getServerSideProps(context) {
     console.log(error.message);
   } finally {
   }
-  
+
   return {
     props: {
-      website:profile.website,
+      website: profile.website,
       username,
       avatar_url,
       links,
