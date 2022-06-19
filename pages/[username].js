@@ -1,5 +1,6 @@
 import { supabase } from "../utils/supabaseClient";
 import Link from "../components/Link";
+import Footer from "../components/Footer";
 import Image from "next/image";
 import Head from "next/head";
 
@@ -16,7 +17,7 @@ const LinkPage = ({ username, avatar_url, links }) => {
           key="desc"
         />
       </Head>
-      <div className="min-h-screen max-w-2xl mx-auto flex flex-col items-center py-10">
+      <div className="h-screen justify-start max-w-2xl mx-auto flex flex-col items-center py-10">
         {avatar_url ? (
           <div className="rounded-full h-24 w-24 mb-4 relative">
             <Image
@@ -60,6 +61,8 @@ const LinkPage = ({ username, avatar_url, links }) => {
             </button>
           </>
         )}
+      <Footer/>
+
       </div>
     </>
   );
