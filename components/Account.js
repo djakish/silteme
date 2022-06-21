@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import Avatar from "./Avatar";
 
+
 function AuthedLink({loading, link, deleteHandler, isDeleteLoading, updateHandler }) {
   const [title,setTitle] = useState(link.title);
   const [url, setUrl] = useState(link.url);
@@ -54,6 +55,8 @@ export default function Account({ session }) {
     getProfile();
     getLinks();
   }, [session]);
+
+
 
   async function getLinks() {
     try {
