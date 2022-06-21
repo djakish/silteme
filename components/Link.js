@@ -11,12 +11,14 @@ export default function Link({ title, url }) {
     border-emerald-300 
       border-2
       py-4 
+      px-4
       m-4
       hover:bg-neutral-900 
       hover:text-emerald-300
       w-72
       sm:w-full
-      rounded-full">
+      rounded-full
+      truncate ...">
         {title}
       </button>
     </NextLink>
