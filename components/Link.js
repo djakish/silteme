@@ -8,7 +8,7 @@ export default function Link({ title, url }) {
       bg-emerald-400 
       text-white 
       font-bold
-    border-emerald-300 
+      border-emerald-300 
       border-2
       py-4 
       px-4

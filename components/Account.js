@@ -2,28 +2,31 @@ import { useState, useEffect } from "react";
 import { supabase } from "../utils/supabaseClient";
 import Avatar from "./Avatar";
 
-
-function AuthedLink({loading, link, deleteHandler, isDeleteLoading, updateHandler }) {
-  const [title,setTitle] = useState(link.title);
+function AuthedLink({ loading, link, deleteHandler, isDeleteLoading, updateHandler }) {
+  const [title, setTitle] = useState(link.title);
   const [url, setUrl] = useState(link.url);
   return (
-    <div className="flex justify-between mt-5 p-2 ">
-      <input className="bg-transparent text-white border border-gray-300 text-lg rounded-lg block w-full p-2.5" 
-        onChange={e => setTitle(e.target.value)} 
+    <div className="  mt-5 p-2">
+      <input className="bg-transparent text-white border-2 border-gray-300 text-lg rounded-lg block w-full p-2.5 my-2.5"
+        onChange={e => setTitle(e.target.value)}
         value={title} />
-      <input className="bg-transparent text-white  border border-gray-300 text-lg rounded-lg block w-full p-2.5" 
-        onChange={e => setUrl(e.target.value)} 
+      <input className="bg-transparent text-white  border-2 border-gray-300 text-lg rounded-lg block w-full p-2.5 my-2.5"
+        onChange={e => setUrl(e.target.value)}
         value={url} />
+
+
+      <div className="flex justify-between"> 
       <button
-        className="text-white rounded-lg p-2 bg-emerald-400 "
+        className="text-white rounded-lg p-2 bg-emerald-400"
         onClick={(event) => {
           event.stopPropagation();
-          updateHandler({linkId:link.id,title,url});
+          updateHandler({ linkId: link.id, title, url });
         }}
         disabled={loading}
       >
-      {loading ? "Loading" : "Update"}
+        {loading ? "Loading" : "Refresh"}
       </button>
+
       <button
         className="text-white rounded-lg bg-red-600 p-2"
         onClick={(event) => {
@@ -32,8 +35,10 @@ function AuthedLink({loading, link, deleteHandler, isDeleteLoading, updateHandle
         }}
         disabled={isDeleteLoading}
       >
-        Delete
+        {isDeleteLoading ? "Loading" : "Delete"}
+
       </button>
+      </div>
     </div>
   );
 }
@@ -46,7 +51,7 @@ export default function Account({ session }) {
 
   // For links
   const [links, setLinks] = useState([]);
-  const [title, setTitle] = useState("null");
+  const [title, setTitle] = useState(null);
   const [url, setUrl] = useState(null);
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -105,7 +110,7 @@ export default function Account({ session }) {
     }
   }
 
-  const updateHandler = async ({linkId, title, url}) => {
+  const updateHandler = async ({ linkId, title, url }) => {
     try {
       setIsUpdateLoading(true);
       const user = supabase.auth.user();
@@ -116,11 +121,11 @@ export default function Account({ session }) {
         title,
         url,
       };
-      
+
       const { error } = await supabase
         .from('links')
         .update({ url, title })
-        .match({ id: linkId, user_id: user.id})
+        .match({ id: linkId, user_id: user.id })
 
       if (error) {
         throw error;
@@ -128,8 +133,8 @@ export default function Account({ session }) {
     } catch (error) {
       alert(error.message);
     } finally {
-     setIsUpdateLoading(false);
-    }  
+      setIsUpdateLoading(false);
+    }
   };
 
   const deleteHandler = async (linkId) => {
@@ -196,10 +201,10 @@ export default function Account({ session }) {
   }
 
   const inputStyle =
-    "block bg-transparent text-white	disabled:text-gray-500  border border-gray-300 text-lg rounded-lg block w-full p-2.5";
+    "block bg-transparent text-white	disabled:text-gray-500  border-2 border-gray-300 text-lg rounded-lg block w-full p-2.5";
   const labelStyle = "pt-4 block mb-2 text-gray-500 font-semibold";
   const buttonStyle =
-    "w-full mt-4 text-white bg-emerald-400 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center";
+    "w-full mt-4 text-white bg-emerald-400 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center";
   return (
     <div className="pt-10">
       <Avatar
@@ -264,6 +269,9 @@ export default function Account({ session }) {
       </div>
 
       <div>
+      <div className="flex items-center pt-10">
+        <div className="w-full text-xl text-center font-bold text-white">Add a new url</div>
+      </div>
         <label className={labelStyle} htmlFor="title">
           Title
         </label>
@@ -294,10 +302,12 @@ export default function Account({ session }) {
           Add Link
         </button>
       </div>
-      <label className="text-xl font-bold text-white  mt-20">My Links</label>
-      
+      <div className="flex items-center pt-10">
+        <div className="w-full text-xl text-center font-bold text-white">Links</div>
+      </div>
+
       {links.map((link, index) => (
-        <AuthedLink loading={isUpdateLoading} link={link} key={index} deleteHandler={deleteHandler} updateHandler={updateHandler}/>
+        <AuthedLink loading={isUpdateLoading} link={link} key={index} deleteHandler={deleteHandler} updateHandler={updateHandler} />
       ))}
     </div>
   );
